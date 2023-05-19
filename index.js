@@ -42,6 +42,11 @@ app.get("/toy_three",async (req,res) => {
 })
 
 
+app.get("/all",async (req,res) => {
+  const cursor = await myCollection.find().limit(20).toArray();
+  res.send(cursor)
+})
+
 app.get("/category/:category",async (req,res) => {
   const query = { category: `${req.params.category}` };
   const cursor = await myCollection.find(query).toArray();
@@ -54,6 +59,53 @@ app.get("/details/:id", async (req,res) => {
   const cursor = await myCollection.findOne(query);
   res.send(cursor)
 })
+
+app.get("/user/:name", async (req,res) => {
+  const query = { displayName: `${req.params.name}`};
+  const cursor = await myCollection.find(query).toArray();
+  res.send(cursor)
+})
+
+app.get("/update/:id", async (req,res) => {
+  const query = { _id: new ObjectId(req.params.id)};
+  const cursor = await myCollection.findOne(query);
+  res.send(cursor)
+  // console.log(query)
+})
+
+app.post("/add_toy",async (req,res) => {
+  const data = req.body;
+  const result = await myCollection.insertOne(data);
+  res.send(result)
+})
+
+// delete 
+app.delete("/delete/:id",async (req,res) => {
+  const myId = req.params.id;
+  const query = { _id: new ObjectId(myId) };
+  const result = await myCollection.deleteOne(query);
+  res.send(result);
+})
+
+// update 
+app.put("/update/:id",async (req,res) => {
+  const myId = req.params.id;
+  const data = req.body;
+  const filter = { _id: new ObjectId(myId) };
+ 
+  const updateDoc = {
+      $set: {
+        name : data.name,
+        price: data.price,
+        shortDescription: data.shortDescription,
+        ratings: data.ratings
+      },
+    };
+
+    const result = await myCollection.updateOne(filter, updateDoc);
+    res.send(result)
+})
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
