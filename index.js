@@ -6,12 +6,23 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // middleware 
-app.use(cors());
+
+const corsOptions ={
+  origin:'', 
+  credentials:true,    
+  optionSuccessStatus:200,
+  methods: ["GET","POST","DELETE","PUT","PATCH"]
+}
+
+app.use(cors(corsOptions))
+app.options("",cors(corsOptions))
+
+// app.use(cors());
 app.use(express.json());
 
 // routes 
 app.get('/',(req,res) => {
-    res.send(`hello world ${process.env.DB_PASS}`)
+    res.send(`hello world`)
 })
 
 // database connection and database route 
@@ -31,10 +42,16 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    //  client.connect();
     const database = client.db("Toy_Master");
     const myCollection = database.collection("allToy");
 
+
+    app.get("/all",async (req,res) => {
+
+      const cursor = await myCollection.find().limit(20).toArray();
+      res.send(cursor)
+    })
 
 app.get("/toy_three",async (req,res) => {
   const cursor = await myCollection.find().limit(6).toArray();
@@ -42,10 +59,7 @@ app.get("/toy_three",async (req,res) => {
 })
 
 
-app.get("/all",async (req,res) => {
-  const cursor = await myCollection.find().limit(20).toArray();
-  res.send(cursor)
-})
+
 
 app.get("/category/:category",async (req,res) => {
   const query = { category: `${req.params.category}` };
@@ -72,7 +86,6 @@ app.get("/specific_toy", async (req,res) => {
   }else {
     final = cursor.sort((item1,item2) => item2.price - item1.price)
   }
-  console.log(final)
   res.send(final)
 })
 
@@ -89,13 +102,7 @@ app.post("/add_toy",async (req,res) => {
   res.send(result)
 })
 
-// delete 
-app.delete("/delete/:id",async (req,res) => {
-  const myId = req.params.id;
-  const query = { _id: new ObjectId(myId) };
-  const result = await myCollection.deleteOne(query);
-  res.send(result);
-})
+
 
 // update 
 app.put("/update/:id",async (req,res) => {
@@ -112,6 +119,14 @@ app.put("/update/:id",async (req,res) => {
       },
     };
 
+
+    // delete 
+app.delete("/delete/:id",async (req,res) => {
+  const myId = req.params.id;
+  const query = { _id: new ObjectId(myId) };
+  const result = await myCollection.deleteOne(query);
+  res.send(result);
+})
     const result = await myCollection.updateOne(filter, updateDoc);
     res.send(result)
 })
