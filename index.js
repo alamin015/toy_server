@@ -60,8 +60,8 @@ app.get("/details/:id", async (req,res) => {
   res.send(cursor)
 })
 
-app.get("/user/:name", async (req,res) => {
-  const query = { displayName: `${req.params.name}`};
+app.get("/user/:email", async (req,res) => {
+  const query = { email: `${req.params.email}`};
   const cursor = await myCollection.find(query).toArray();
   res.send(cursor)
 })
@@ -70,13 +70,13 @@ app.get("/update/:id", async (req,res) => {
   const query = { _id: new ObjectId(req.params.id)};
   const cursor = await myCollection.findOne(query);
   res.send(cursor)
-  // console.log(query)
+  
 })
 
 app.post("/add_toy",async (req,res) => {
   const data = req.body;
   const result = await myCollection.insertOne(data);
-  res.send(result)
+  res.send(data)
 })
 
 // delete 
