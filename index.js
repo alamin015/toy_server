@@ -119,7 +119,9 @@ app.put("/update/:id",async (req,res) => {
       },
     };
 
-
+    const result = await myCollection.updateOne(filter, updateDoc);
+    res.send(result)
+})
     // delete 
 app.delete("/delete/:id",async (req,res) => {
   const myId = req.params.id;
@@ -127,9 +129,7 @@ app.delete("/delete/:id",async (req,res) => {
   const result = await myCollection.deleteOne(query);
   res.send(result);
 })
-    const result = await myCollection.updateOne(filter, updateDoc);
-    res.send(result)
-})
+
 
 
     // Send a ping to confirm a successful connection
