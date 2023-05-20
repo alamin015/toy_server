@@ -80,7 +80,7 @@ app.get("/update/:id", async (req,res) => {
 app.post("/add_toy",async (req,res) => {
   const data = req.body;
   const result = await myCollection.insertOne(data);
-  res.send(data)
+  res.send(result)
 })
 
 // delete 
