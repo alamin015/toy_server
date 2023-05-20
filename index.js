@@ -60,9 +60,13 @@ app.get("/details/:id", async (req,res) => {
   res.send(cursor)
 })
 
-app.get("/user/:email", async (req,res) => {
-  const query = { email: `${req.params.email}`};
-  const cursor = await myCollection.find(query).toArray();
+app.get("/specific_toy", async (req,res) => {
+
+  const myQuery = req.query;
+  const sort = {price: parseInt(myQuery.order)};
+  const query = { email: `${myQuery.email}`};
+  const cursor = await myCollection.find(query).sort(sort).toArray();
+  // console.log(cursor)
   res.send(cursor)
 })
 
