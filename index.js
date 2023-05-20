@@ -66,8 +66,14 @@ app.get("/specific_toy", async (req,res) => {
   const sort = {price: parseInt(myQuery.order)};
   const query = { email: `${myQuery.email}`};
   const cursor = await myCollection.find(query).sort(sort).toArray();
-  // console.log(cursor)
-  res.send(cursor)
+  let final;
+  if(myQuery.order == "-1"){
+    final = cursor.sort((item1,item2) => item1.price - item2.price)
+  }else {
+    final = cursor.sort((item1,item2) => item2.price - item1.price)
+  }
+  console.log(final)
+  res.send(final)
 })
 
 app.get("/update/:id", async (req,res) => {
